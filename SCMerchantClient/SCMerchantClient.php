@@ -35,7 +35,7 @@ class SCMerchantClient
 	function __construct($merchantApiUrl, $merchantId, $apiId, $debug = false)
 	{
 		$this->privateMerchantCertLocation = dirname(__FILE__) . '/../cert/mprivate.pem';
-		$this->publicSpectroCoinCertLocation = 'https://spectrocoin.com/files/merchant.public.pem';
+		$this->publicSpectroCoinCertLocation = '/../cert/mpublic.pem';
 		$this->merchantApiUrl = $merchantApiUrl;
 		$this->merchantId = $merchantId;
 		$this->apiId = $apiId;
