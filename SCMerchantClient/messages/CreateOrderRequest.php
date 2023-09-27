@@ -12,6 +12,9 @@ class CreateOrderRequest
 	private $callbackUrl;
 	private $successUrl;
 	private $failureUrl;
+	private $payerName;
+	private $payerSurname;
+	private $payerEmail;
 
 	/**
 	 * @param $orderId
@@ -24,8 +27,11 @@ class CreateOrderRequest
 	 * @param $callbackUrl
 	 * @param $successUrl
 	 * @param $failureUrl
+	 * @param $payerName
+	 * @param $payerSurname
+	 * @param $payerEmail
 	 */
-	function __construct($orderId, $payCurrency, $payAmount, $receiveCurrency, $receiveAmount, $description, $culture, $callbackUrl, $successUrl, $failureUrl)
+	function __construct($orderId, $payCurrency, $payAmount, $receiveCurrency, $receiveAmount, $description, $culture, $callbackUrl, $successUrl, $failureUrl, $payerName = null, $payerSurname = null, $payerEmail = null)
 	{
 		$this->orderId = $orderId;
 		$this->payCurrency = $payCurrency;
@@ -37,6 +43,9 @@ class CreateOrderRequest
 		$this->callbackUrl = $callbackUrl;
 		$this->successUrl = $successUrl;
 		$this->failureUrl = $failureUrl;
+		$this->payerName = $payerName;
+		$this->payerSurname = $payerSurname;
+		$this->payerEmail = $payerEmail;
 	}
 
 	/**
@@ -119,5 +128,35 @@ class CreateOrderRequest
 		return $this->failureUrl == null ? '' : $this->failureUrl;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getPayerName()
+	{
+		return $this->payerName == null ? '' : $this->payerName;
+	}
 
+	/**
+	 * @return string
+	 */
+	public function getPayerSurname()
+	{
+		return $this->payerSurname == null ? '' : $this->payerSurname;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPayerEmail()
+	{
+		return $this->payerEmail == null ? '' : $this->payerEmail;
+	}
+
+	/**
+	 * @return string
+	 */
+	// public function getPayerDOB()
+	// {
+	// 	return $this->payerDOB == null ? '' : $this->payerDOB;
+	// }
 }

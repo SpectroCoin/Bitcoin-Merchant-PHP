@@ -55,18 +55,23 @@ class SCMerchantClient
 	public function createOrder(CreateOrderRequest $request)
 	{
 		$payload = array(
-			'merchantId' => $this->merchantId,
-			'apiId' => $this->apiId,
+			
+			'userId' => $this->merchantId,
+			'merchantApiId' => $this->apiId,
 			'orderId' => $request->getOrderId(),
 			'payCurrency' => $request->getPayCurrency(),
 			'payAmount' => $request->getPayAmount(),
 			'receiveCurrency' => $request->getReceiveCurrency(),
 			'receiveAmount' => $request->getReceiveAmount(),
 			'description' => $request->getDescription(),
+			'payerEmail' => $request->getPayerEmail(),
+			'payerName' => $request->getPayerName(),
+			'payerSurname' => $request->getPayerSurname(),
 			'culture' => $request->getCulture(),
 			'callbackUrl' => $request->getCallbackUrl(),
 			'successUrl' => $request->getSuccessUrl(),
-			'failureUrl' => $request->getFailureUrl()
+			'failureUrl' => $request->getFailureUrl(),
+
 		);
 
 		$formHandler = new \Httpful\Handlers\FormHandler();
@@ -96,10 +101,8 @@ class SCMerchantClient
 		$privateKey = $this->privateMerchantKey != null ? $this->privateMerchantKey : file_get_contents($this->privateMerchantCertLocation);
 		$pkeyid = openssl_pkey_get_private($privateKey);
 
-		// compute signature
 		$s = openssl_sign($data, $signature, $pkeyid, OPENSSL_ALGO_SHA1);
 		$encodedSignature = base64_encode($signature);
-		// free the key from memory
 		openssl_free_key($pkeyid);
 
 		return $encodedSignature;
@@ -113,8 +116,8 @@ class SCMerchantClient
 	{
 		$result = null;
 
-		if ($r != null && isset($r['merchantId'], $r['apiId'], $r['orderId'], $r['payCurrency'], $r['payAmount'], $r['receiveCurrency'], $r['receiveAmount'], $r['receivedAmount'], $r['description'], $r['orderRequestId'], $r['status'], $r['sign'])) {
-			$result = new OrderCallback($r['merchantId'], $r['apiId'], $r['orderId'], $r['payCurrency'], $r['payAmount'], $r['receiveCurrency'], $r['receiveAmount'], $r['receivedAmount'], $r['description'], $r['orderRequestId'], $r['status'], $r['sign']);
+		if ($r != null && isset($r['userId'], $r['merchantApiId'], $r['merchantId'], $r['apiId'], $r['orderId'], $r['payCurrency'], $r['payAmount'], $r['receiveCurrency'], $r['receiveAmount'], $r['receivedAmount'], $r['description'], $r['orderRequestId'], $r['status'], $r['sign'], $r['payerName'], $r['payerSurname'], $r['payerEmail'])) {
+			$result = new OrderCallback($r['userId'], $r['merchantApiId'], $r['merchantId'], $r['apiId'], $r['orderId'], $r['payCurrency'], $r['payAmount'], $r['receiveCurrency'], $r['receiveAmount'], $r['receivedAmount'], $r['description'], $r['orderRequestId'], $r['status'], $r['sign'], $r['payerName'], $r['payerSurname'], $r['payerEmail']);
 		}
 
 		return $result;
@@ -130,7 +133,7 @@ class SCMerchantClient
 
 		if ($c != null) {
 
-			if ($this->merchantId != $c->getMerchantId() || $this->apiId != $c->getApiId())
+			if ($this->userId != $c->getUserId() || $this->merchantApiId != $c->getMerchantApiId())
 				return $valid;
 
 			if (!$c->validate())
