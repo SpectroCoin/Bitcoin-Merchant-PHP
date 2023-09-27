@@ -17,7 +17,6 @@ class OrderCallback
 	private $payerName;
 	private $payerSurname;
 	private $payerEmail;
-	// private $payerDOB;
 	private $orderRequestId;
 	private $status;
 	private $sign;
@@ -38,7 +37,6 @@ class OrderCallback
 		$this->payerName = $payerName;
 		$this->payerSurname = $payerSurname;
 		$this->payerEmail = $payerEmail;
-		// $this->payerDOB = $payerDOB;
 		$this->orderRequestId = $orderRequestId;
 		$this->status = $status;
 		$this->sign = $sign;
@@ -180,14 +178,6 @@ class OrderCallback
 		return $this->payerEmail;
 	}
 
-	// /**
-	//  * @return mixed
-	//  */
-	// public function getPayerDOB()
-	// {
-	// 	return $this->payerDOB;
-	// }
-
 	public function validate()
 	{
 		$valid = true;
@@ -208,8 +198,7 @@ class OrderCallback
 		$valid &= $this->getPayerName() != '';
 		$valid &= $this->getPayerSurname() != '';
 		$valid &= $this->getPayerEmail() != '';
-		// $valid &= $this->getPayerDOB() != '';
-
+		
 		return $valid;
 	}
 

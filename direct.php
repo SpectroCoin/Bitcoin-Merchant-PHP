@@ -6,6 +6,7 @@
 </head>
 <body>
 <?php
+//direct.php
 include_once('constants.php');
 include_once('SCMerchantClient/SCMerchantClient.php');
 

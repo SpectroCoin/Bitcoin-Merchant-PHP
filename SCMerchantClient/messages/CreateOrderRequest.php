@@ -151,12 +151,4 @@ class CreateOrderRequest
 	{
 		return $this->payerEmail == null ? '' : $this->payerEmail;
 	}
-
-	/**
-	 * @return string
-	 */
-	// public function getPayerDOB()
-	// {
-	// 	return $this->payerDOB == null ? '' : $this->payerDOB;
-	// }
 }
