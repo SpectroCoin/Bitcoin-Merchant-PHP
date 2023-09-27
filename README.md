@@ -36,8 +36,7 @@ Use <em>redirect.php</em> for handling payment redirection and completing the pa
 
 This client has been dev`eloped by SpectroCoin.com If you need any further support regarding our services you can contact us via:
 
-E-mail: info@spectrocoin.com </br>
-Phone: +372 683 8000 </br>
+E-mail: merchant@spectrocoin.com </br>
 Skype: spectrocoin_merchant </br>
 [Web](https://spectrocoin.com) </br>
 [Twitter](https://twitter.com/spectrocoin) </br>
