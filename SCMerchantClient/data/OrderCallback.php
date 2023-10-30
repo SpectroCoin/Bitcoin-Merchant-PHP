@@ -3,6 +3,8 @@
 class OrderCallback
 {
 
+	private $userId;
+	private $merchantApiId;
 	private $merchantId;
 	private $apiId;
 	private $orderId;
@@ -12,12 +14,17 @@ class OrderCallback
 	private $receiveAmount;
 	private $receivedAmount;
 	private $description;
+	private $payerName;
+	private $payerSurname;
+	private $payerEmail;
 	private $orderRequestId;
 	private $status;
 	private $sign;
 
-	function __construct($merchantId, $apiId, $orderId, $payCurrency, $payAmount, $receiveCurrency, $receiveAmount, $receivedAmount, $description, $orderRequestId, $status, $sign)
+	function __construct($userId, $merchantApiId, $merchantId, $apiId, $orderId, $payCurrency, $payAmount, $receiveCurrency, $receiveAmount, $receivedAmount, $description, $orderRequestId, $status, $sign, $payerName, $payerSurname, $payerEmail)
 	{
+		$this->$userId = $userId;
+		$this->$merchantApiId = $merchantApiId;
 		$this->merchantId = $merchantId;
 		$this->apiId = $apiId;
 		$this->orderId = $orderId;
@@ -27,9 +34,28 @@ class OrderCallback
 		$this->receiveAmount = $receiveAmount;
 		$this->receivedAmount = $receivedAmount;
 		$this->description = $description;
+		$this->payerName = $payerName;
+		$this->payerSurname = $payerSurname;
+		$this->payerEmail = $payerEmail;
 		$this->orderRequestId = $orderRequestId;
 		$this->status = $status;
 		$this->sign = $sign;
+	}
+
+	/**
+	* @return mixed
+	*/
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getMerchantApiId()
+	{
+		return $this->merchantApiId;
 	}
 
 	/**
@@ -128,10 +154,36 @@ class OrderCallback
 		return $this->sign;
 	}
 
+	/**
+	 * @return mixed
+	 */
+	public function getPayerName()
+	{
+		return $this->payerName;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPayerSurname()
+	{
+		return $this->payerSurname;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPayerEmail()
+	{
+		return $this->payerEmail;
+	}
+
 	public function validate()
 	{
 		$valid = true;
 
+		$valid &= $this->getUserId() != '';
+		$valid &= $this->getMerchantApiId() != '';
 		$valid &= $this->getMerchantId() > 0;
 		$valid &= $this->getApiId() > 0;
 		$valid &= $this->getOrderId() != '';
@@ -143,7 +195,10 @@ class OrderCallback
 		$valid &= $this->getOrderRequestId() > 0;
 		$valid &= $this->getStatus() > 0;
 		$valid &= $this->getSign() != '';
-
+		$valid &= $this->getPayerName() != '';
+		$valid &= $this->getPayerSurname() != '';
+		$valid &= $this->getPayerEmail() != '';
+		
 		return $valid;
 	}
 
