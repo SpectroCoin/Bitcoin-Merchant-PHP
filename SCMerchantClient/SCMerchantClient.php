@@ -133,7 +133,7 @@ class SCMerchantClient
 
 		if ($c != null) {
 
-			if ($this->userId != $c->getUserId() || $this->merchantApiId != $c->getMerchantApiId())
+			if ($this->merchantId != $c->getUserId() || $this->apiId != $c->getMerchantApiId())
 				return $valid;
 
 			if (!$c->validate())
