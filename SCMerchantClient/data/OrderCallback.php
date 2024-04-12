@@ -23,8 +23,8 @@ class OrderCallback
 
 	function __construct($userId, $merchantApiId, $merchantId, $apiId, $orderId, $payCurrency, $payAmount, $receiveCurrency, $receiveAmount, $receivedAmount, $description, $orderRequestId, $status, $sign, $payerName, $payerSurname, $payerEmail)
 	{
-		$this->$userId = $userId;
-		$this->$merchantApiId = $merchantApiId;
+		$this->userId = $userId;
+		$this->merchantApiId = $merchantApiId;
 		$this->merchantId = $merchantId;
 		$this->apiId = $apiId;
 		$this->orderId = $orderId;
