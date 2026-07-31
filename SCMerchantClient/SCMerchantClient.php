@@ -48,6 +48,16 @@ class SCMerchantClient
 	public function setPrivateMerchantKey($privateKey) {
 		$this->privateMerchantKey = $privateKey;
 	}
+
+	/**
+	 * Allows pinning the SpectroCoin public certificate to a local file instead
+	 * of fetching it over the network on every callback.
+	 *
+	 * @param $location
+	 */
+	public function setPublicSpectroCoinCertLocation($location) {
+		$this->publicSpectroCoinCertLocation = $location;
+	}
 	/**
 	 * @param CreateOrderRequest $request
 	 * @return ApiError|CreateOrderResponse
@@ -79,7 +89,10 @@ class SCMerchantClient
 		$signature = $this->generateSignature($data);
 		$payload['sign'] = $signature;
 		if (!$this->debug) {
-			$response = \Httpful\Request::post($this->merchantApiUrl . '/createOrder', $payload, \Httpful\Mime::FORM)->expects(\Httpful\Mime::JSON)->send();
+			// strictSSL(true) is required: Httpful defaults to disabling peer and
+			// host verification, which would allow an on-path attacker to alter
+			// the order response (deposit address, redirect URL).
+			$response = \Httpful\Request::post($this->merchantApiUrl . '/createOrder', $payload, \Httpful\Mime::FORM)->strictSSL(true)->expects(\Httpful\Mime::JSON)->send();
 			if ($response != null) {
 				$body = $response->body;
 				if ($body != null) {
@@ -91,7 +104,7 @@ class SCMerchantClient
 				}
 			}
 		} else {
-			$response = \Httpful\Request::post($this->merchantApiUrl . '/createOrder', $payload, \Httpful\Mime::FORM)->send();
+			$response = \Httpful\Request::post($this->merchantApiUrl . '/createOrder', $payload, \Httpful\Mime::FORM)->strictSSL(true)->send();
 			exit('<pre>'.print_r($response, true).'</pre>');
 		}
 	}
@@ -155,7 +168,9 @@ class SCMerchantClient
 
 			$formHandler = new \Httpful\Handlers\FormHandler();
 			$data = $formHandler->serialize($payload);
-			$valid = $this->validateSignature($data, $c->getSign());
+			// openssl_verify() returns 1 (valid), 0 (invalid) or -1 (error).
+			// Only 1 may be treated as a valid signature.
+			$valid = $this->validateSignature($data, $c->getSign()) === 1;
 		}
 
 		return $valid;
@@ -168,13 +183,26 @@ class SCMerchantClient
 	 */
 	private function validateSignature($data, $signature)
 	{
-		$sig = base64_decode($signature);
-		$publicKey = file_get_contents($this->publicSpectroCoinCertLocation);
-		$public_key_pem = openssl_pkey_get_public($publicKey);
-		$r = openssl_verify($data, $sig, $public_key_pem, OPENSSL_ALGO_SHA1);
-		openssl_free_key($public_key_pem);
+		if ($signature === null || $signature === '') {
+			return 0;
+		}
 
-		return $r;
+		$sig = base64_decode($signature, true);
+		if ($sig === false || $sig === '') {
+			return 0;
+		}
+
+		$publicKey = file_get_contents($this->publicSpectroCoinCertLocation);
+		if ($publicKey === false) {
+			return -1;
+		}
+
+		$public_key_pem = openssl_pkey_get_public($publicKey);
+		if ($public_key_pem === false) {
+			return -1;
+		}
+
+		return openssl_verify($data, $sig, $public_key_pem, OPENSSL_ALGO_SHA1);
 	}
 
 }
