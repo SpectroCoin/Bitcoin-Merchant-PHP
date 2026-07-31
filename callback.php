@@ -3,8 +3,16 @@
 include_once('constants.php');
 include_once('SCMerchantClient/SCMerchantClient.php');
 
+// The callback is an unauthenticated server-to-server webhook: the payload
+// signature is the only authenticator, so it has to be verified before any
+// order is acted on, and the payload must be read from the POST body only.
+if (!isset($_SERVER['REQUEST_METHOD']) || strtoupper($_SERVER['REQUEST_METHOD']) !== 'POST') {
+	http_response_code(405);
+	exit('Invalid request method.');
+}
+
 $scMerchantClient = new SCMerchantClient(SC_API_URL, SC_MERCHANT_ID, SC_MERCHANT_API_ID);
-$callback = $scMerchantClient->parseCreateOrderCallback($_REQUEST);
+$callback = $scMerchantClient->parseCreateOrderCallback($_POST);
 
 if ($callback != null && $scMerchantClient->validateCreateOrderCallback($callback)){
 
@@ -36,6 +44,7 @@ if ($callback != null && $scMerchantClient->validateCreateOrderCallback($callbac
 	echo '*ok*';
 
 } else {
+	http_response_code(400);
 	echo 'Invalid callback!';
 }
 
