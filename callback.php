@@ -16,24 +16,36 @@ $callback = $scMerchantClient->parseCreateOrderCallback($_POST);
 
 if ($callback != null && $scMerchantClient->validateCreateOrderCallback($callback)){
 
+	// These statuses report on a payment already under way (partial/late
+	// payments, refunds, the TEST_* dry-run traffic) and carry no shop-side
+	// transition. They must be acknowledged, not routed through the switch
+	// below, because moving the order here would either fulfil an order that
+	// was not paid in full or reverse one the merchant may already have
+	// settled by hand.
+	if (OrderStatusEnum::isInformational($callback->getStatus())) {
+		processInformationalCallback($callback);
+		echo '*ok*';
+		exit;
+	}
+
 	switch ($callback->getStatus()) {
-		case OrderStatusEnum::$Test:
-			processTestCallback($callback);
-			break;
 		case OrderStatusEnum::$New:
 			processNewCallback($callback);
 			break;
 		case OrderStatusEnum::$Pending:
 			processPendingCallback($callback);
 			break;
+		case OrderStatusEnum::$Paid:
+			processPaidCallback($callback);
+			break;
 		case OrderStatusEnum::$Expired:
 			processExpiredCallback($callback);
 			break;
 		case OrderStatusEnum::$Failed:
+		case OrderStatusEnum::$Cancelled:
+		case OrderStatusEnum::$Rejected:
+		case OrderStatusEnum::$InvalidPayment:
 			processFailedCallback($callback);
-			break;
-		case OrderStatusEnum::$Paid:
-			processPaidCallback($callback);
 			break;
 		default:
 			echo 'Unknown order status: '.$callback->getStatus();
@@ -48,8 +60,8 @@ if ($callback != null && $scMerchantClient->validateCreateOrderCallback($callbac
 	echo 'Invalid callback!';
 }
 
-function processTestCallback(OrderCallback $callback) {
-	// process
+function processInformationalCallback(OrderCallback $callback) {
+	// process, must not change the order's status
 }
 function processNewCallback(OrderCallback $callback) {
 	// process
@@ -57,12 +69,12 @@ function processNewCallback(OrderCallback $callback) {
 function processPendingCallback(OrderCallback $callback) {
 	// process
 }
+function processPaidCallback(OrderCallback $callback) {
+	// process
+}
 function processExpiredCallback(OrderCallback $callback) {
 	// process
 }
 function processFailedCallback(OrderCallback $callback) {
-	// process
-}
-function processPaidCallback(OrderCallback $callback) {
 	// process
 }
