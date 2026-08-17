@@ -50,6 +50,17 @@ class SCMerchantClient
 	}
 
 	/**
+	 * Points the client at a private key held outside the web root, which is
+	 * where it belongs: anything under the document root can be served, and
+	 * anything inside this directory can be committed.
+	 *
+	 * @param $location
+	 */
+	public function setPrivateMerchantCertLocation($location) {
+		$this->privateMerchantCertLocation = $location;
+	}
+
+	/**
 	 * Allows pinning the SpectroCoin public certificate to a local file instead
 	 * of fetching it over the network on every callback.
 	 *

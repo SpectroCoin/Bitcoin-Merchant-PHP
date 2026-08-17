@@ -1,0 +1,10 @@
+# Triaged 2026-08-17. Each entry is a finding that has been reviewed; a new
+# finding will still fail the build.
+
+# Two real merchant private keys, committed in 2014 and again in 2023 and
+# emptied to 0 bytes in Oct 2023. They stay reachable in history, so the
+# keypairs are treated as compromised and regenerated in the merchant project
+# rather than relied on. Ignored here because published history cannot be
+# recalled; the fix is rotation, plus keeping keys out of the repository.
+ec0300125cdcf6207c7d9adc8ad2da013b68662b:cert/mprivate.pem:private-key:1
+0441aa0955b262dcbb3ce17bb0dae72325387dbd:cert/mprivate.pem:private-key:1
