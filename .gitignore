@@ -1,0 +1,4 @@
+# Merchant keys are credentials, not source. They were committed here twice,
+# in 2014 and again in 2023, because the client used to read them from a
+# tracked file inside the repository.
+cert/*.pem
